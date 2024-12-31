@@ -121,6 +121,7 @@ public class MapData {
             } while (maps[y][x] != TYPE_SPACE || items[y][x] != TYPE_SPACE); // 空白マスを選択
             items[y][x] = (Math.random() < 0.5) ? TYPE_ITEM_MASH : TYPE_ITEM_POISON_MASH;
         }
+        items[1][1] = TYPE_SPACE;
     }
     
 
