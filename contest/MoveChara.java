@@ -11,7 +11,7 @@ public class MoveChara {
 
     private final String[] directions = { "Down", "Left", "Right", "Up" };
     private final String[] animationNumbers = { "1", "2", "3" };
-    private final String pngPathPre = "png/cat";
+    private final String pngPathPre = "png/slime";
     private final String pngPathSuf = ".png";
 
     private int posX;
@@ -76,7 +76,7 @@ public class MoveChara {
         if (isMovable(dx, dy)) {
             posX += dx;
             posY += dy;
-	    System.out.println("chara[X,Y]:" + posX + "," + posY);
+            System.out.println("chara[X,Y]:" + posX + "," + posY);
             return true;
         } else {
             return false;
