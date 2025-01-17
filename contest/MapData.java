@@ -5,17 +5,16 @@ public class MapData {
     public static final int TYPE_SPACE = 0;
     public static final int TYPE_WALL = 1;
     private static final String mapImageFiles[] = {
-            "png/SPACE.png",
-            "png/WALL.png"
+            "img/object/SPACE.png",
+            "img/object/WALL.png"
     };
     public static final int TYPE_ITEM_DIG = 2;
     public static final int TYPE_ITEM_MASH = 3;
     public static final int TYPE_ITEM_POISON_MASH = 4;
     private static final String mapItemFiles[] = {
-            "png/dig.png",
-
-        "png/healingMushroom.png",
-        "png/poisonMushroom.png"
+            "img/object/dig.png",
+            "img/object/healingMushroom.png",
+            "img/object/poisonMushroom.png"
     };
 
     private Image[] mapImages;
