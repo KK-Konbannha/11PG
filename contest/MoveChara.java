@@ -8,32 +8,30 @@ public class MoveChara {
     public static final int TYPE_RIGHT = 2;
     public static final int TYPE_UP = 3;
 
-    private final String[] directions = { "Down", "Left", "Right", "Up" };
-    private final String[] animationNumbers = { "1", "2", "3" };
-    private final String pngPathPre = "img/slime/";
-    private final String pngPathSuf = ".png";
-
     private int posX;
     private int posY;
 
-    private MapData mapData;
+    private final MapData mapData;
 
-    private Image[][] charaImages;
-    private ImageView[] charaImageViews;
-    private ImageAnimation[] charaImageAnimations;
+    private final ImageView[] charaImageViews;
+    private final ImageAnimation[] charaImageAnimations;
 
     private int charaDirection;
 
     MoveChara(int startX, int startY, MapData mapData) {
         this.mapData = mapData;
 
-        charaImages = new Image[4][3];
+        Image[][] charaImages = new Image[4][3];
         charaImageViews = new ImageView[4];
         charaImageAnimations = new ImageAnimation[4];
 
         for (int i = 0; i < 4; i++) {
             charaImages[i] = new Image[3];
             for (int j = 0; j < 3; j++) {
+                String[] directions = {"Down", "Left", "Right", "Up"};
+                String[] animationNumbers = {"1", "2", "3"};
+                String pngPathPre = "img/slime/";
+                String pngPathSuf = ".png";
                 charaImages[i][j] = new Image(
                         pngPathPre + directions[i] + animationNumbers[j] + pngPathSuf);
             }
@@ -64,21 +62,15 @@ public class MoveChara {
     private boolean isMovable(int dx, int dy) {
         if (mapData.getMap(posX + dx, posY + dy) == MapData.TYPE_WALL) {
             return false;
-        } else if (mapData.getMap(posX + dx, posY + dy) == MapData.TYPE_SPACE) {
-            return true;
-        }
-        return false;
+        } else return mapData.getMap(posX + dx, posY + dy) == MapData.TYPE_SPACE;
     }
 
     // move the cat
-    public boolean move(int dx, int dy) {
+    public void move(int dx, int dy) {
         if (isMovable(dx, dy)) {
             posX += dx;
             posY += dy;
             System.out.println("chara[X,Y]:" + posX + "," + posY);
-            return true;
-        } else {
-            return false;
         }
     }
 
@@ -98,17 +90,15 @@ public class MoveChara {
     }
 
     // Show the cat animation
-    private class ImageAnimation extends AnimationTimer {
+    private static class ImageAnimation extends AnimationTimer {
 
-        private ImageView charaView = null;
-        private Image[] charaImages = null;
-        private int index = 0;
+        private final ImageView charaView;
+        private final Image[] charaImages;
+        private int index;
 
-        private long duration = 500 * 1000000L; // 500[ms]
         private long startTime = 0;
 
         private long count = 0L;
-        private long preCount;
         private boolean isPlus = true;
 
         public ImageAnimation(ImageView charaView, Image[] images) {
@@ -123,7 +113,9 @@ public class MoveChara {
                 startTime = now;
             }
 
-            preCount = count;
+            long preCount = count;
+            // 500[ms]
+            long duration = 500 * 1000000L;
             count = (now - startTime) / duration;
             if (preCount != count) {
                 if (isPlus) {

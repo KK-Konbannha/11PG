@@ -16,8 +16,7 @@ public class MapGameController implements Initializable {
     public GridPane mapGrid;
     public ImageView[] mapImageViews;
 
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
+    public void initMap() {
         mapData = new MapData(21, 15);
         chara = new MoveChara(1, 1, mapData);
         mapImageViews = new ImageView[mapData.getHeight() * mapData.getWidth()];
@@ -27,11 +26,16 @@ public class MapGameController implements Initializable {
                 mapImageViews[index] = mapData.getImageView(x, y);
             }
         }
-        drawMap(chara, mapData);
+        drawMap(chara);
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        initMap();
     }
 
     // Draw the map
-    public void drawMap(MoveChara c, MapData m) {
+    public void drawMap(MoveChara c) {
         int cx = c.getPosX();
         int cy = c.getPosY();
         mapGrid.getChildren().clear();
@@ -43,7 +47,7 @@ public class MapGameController implements Initializable {
 
                     if (mapData.getItems()[cy][cx] == MapData.TYPE_ITEM_DIG) {
                         System.out.println("You found a dig item!");
-                        reDrawMap();
+                        initMap();
                         return;
                     }
                     
@@ -56,21 +60,6 @@ public class MapGameController implements Initializable {
         }
     }
 
-    public void reDrawMap() {
-        mapData = new MapData(21, 15);
-        chara = new MoveChara(1, 1, mapData);
-        mapImageViews = new ImageView[mapData.getHeight() * mapData.getWidth()];
-        for (int y = 0; y < mapData.getHeight(); y ++) {
-            for (int x = 0; x < mapData.getWidth(); x ++) {
-                int index = y * mapData.getWidth() + x;
-                mapImageViews[index] = mapData.getImageView(x, y);
-            }
-        }
-        drawMap(chara, mapData);
-    }
-    
-    
-    
     // Get users' key actions
     public void keyAction(KeyEvent event) {
         KeyCode key = event.getCode();
@@ -92,7 +81,7 @@ public class MapGameController implements Initializable {
         printAction("UP");
         chara.setCharaDirection(MoveChara.TYPE_UP);
         chara.move(0, -1);
-        drawMap(chara, mapData);
+        drawMap(chara);
         
     }
 
@@ -101,7 +90,7 @@ public class MapGameController implements Initializable {
         printAction("DOWN");
         chara.setCharaDirection(MoveChara.TYPE_DOWN);
         chara.move(0, 1);
-        drawMap(chara, mapData);
+        drawMap(chara);
         
     }
 
@@ -110,7 +99,7 @@ public class MapGameController implements Initializable {
         printAction("LEFT");
         chara.setCharaDirection(MoveChara.TYPE_LEFT);
         chara.move(-1, 0);
-        drawMap(chara, mapData);
+        drawMap(chara);
        
     }
 
@@ -119,13 +108,13 @@ public class MapGameController implements Initializable {
         printAction("RIGHT");
         chara.setCharaDirection(MoveChara.TYPE_RIGHT);
         chara.move(1, 0);
-        drawMap(chara, mapData);
+        drawMap(chara);
        
     }
 
     
     @FXML
-    public void func1ButtonAction(ActionEvent event) {
+    public void func1ButtonAction() {
         try {
             System.out.println("func1");
             StageDB.getMainStage().hide();
@@ -137,27 +126,19 @@ public class MapGameController implements Initializable {
     }
 
     @FXML
-    public void func2ButtonAction(ActionEvent event) {
+    public void func2ButtonAction() {
         System.out.println("func2: Redraw Map!!");
-        mapData = new MapData(21, 15);
-        chara = new MoveChara(1, 1, mapData);
-        mapImageViews = new ImageView[mapData.getHeight() * mapData.getWidth()];
-        for (int y = 0; y < mapData.getHeight(); y ++) {
-            for (int x = 0; x < mapData.getWidth(); x ++) {
-                int index = y * mapData.getWidth() + x;
-                mapImageViews[index] = mapData.getImageView(x, y);
-            }
-        }
-        drawMap(chara, mapData);
+
+        initMap();
     }
 
     @FXML
-    public void func3ButtonAction(ActionEvent event) {
+    public void func3ButtonAction() {
         System.out.println("func3: Nothing to do");
     }
 
     @FXML
-    public void func4ButtonAction(ActionEvent event) {
+    public void func4ButtonAction() {
         System.out.println("func4: Nothing to do");
         
     }
