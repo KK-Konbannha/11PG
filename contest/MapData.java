@@ -4,27 +4,27 @@ import javafx.scene.image.ImageView;
 public class MapData {
     public static final int TYPE_SPACE = 0;
     public static final int TYPE_WALL = 1;
-    private static final String mapImageFiles[] = {
+    private static final String[] mapImageFiles = {
             "img/object/SPACE.png",
             "img/object/WALL.png"
     };
     public static final int TYPE_ITEM_DIG = 2;
     public static final int TYPE_ITEM_MASH = 3;
     public static final int TYPE_ITEM_POISON_MASH = 4;
-    private static final String mapItemFiles[] = {
+    private static final String[] mapItemFiles = {
             "img/object/dig.png",
             "img/object/healingMushroom.png",
             "img/object/poisonMushroom.png"
     };
 
-    private Image[] mapImages;
-    private Image[] itemImages;
-    private ImageView[][] mapImageViews;
-    private ImageView[][] itemImageViews;
-    private int[][] maps;
-    private int[][] items;
-    private int width; // width of the map
-    private int height; // height of the map
+    private final Image[] mapImages;
+    private final Image[] itemImages;
+    private final ImageView[][] mapImageViews;
+    private final ImageView[][] itemImageViews;
+    private final int[][] maps;
+    private final int[][] items;
+    private final int width; // width of the map
+    private final int height; // height of the map
 
     MapData(int x, int y) {
         mapImages = new Image[2];
@@ -43,8 +43,8 @@ public class MapData {
         maps = new int[y][x];
         items = new int[y][x];
 
-        fillMap(MapData.TYPE_WALL);
-        fillItems(MapData.TYPE_SPACE);
+        fillMap();
+        fillItems();
         digMap(1, 3);
         placeDIG();
         placeItems();
@@ -52,17 +52,17 @@ public class MapData {
     }
 
     // fill two-dimentional arrays with a given number (maps[y][x])
-    private void fillMap(int type) {
+    private void fillMap() {
         for (int y = 0; y < height; y ++) {
             for (int x = 0; x < width; x++) {
-                maps[y][x] = type;
+                maps[y][x] = MapData.TYPE_WALL;
             }
         }
     }
-    private void fillItems(int type) {
+    private void fillItems() {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                items[y][x] = type;
+                items[y][x] = MapData.TYPE_SPACE;
             }
         }
     }
@@ -80,9 +80,9 @@ public class MapData {
             dl[r] = tmp;
         }
 
-        for (int i = 0; i < dl.length; i ++) {
-            int dx = dl[i][0];
-            int dy = dl[i][1];
+        for (int[] ints : dl) {
+            int dx = ints[0];
+            int dy = ints[1];
             if (getMap(x + dx * 2, y + dy * 2) == MapData.TYPE_WALL) {
                 setMap(x + dx, y + dy, MapData.TYPE_SPACE);
                 digMap(x + dx * 2, y + dy * 2);
@@ -179,11 +179,6 @@ public class MapData {
 
     public int getWidth() {
         return width;
-    }
-
-
-    public void removeItem(int x, int y) {
-        items[y][x] = TYPE_SPACE;
     }
 
     private int countAvailableSpots() {
