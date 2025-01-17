@@ -9,8 +9,6 @@ public class MoveChara {
     public static final int TYPE_RIGHT = 2;
     public static final int TYPE_UP = 3;
 
-    private final String[] directions = { "Down", "Left", "Right", "Up" };
-    private final String[] animationNumbers = { "1", "2", "3" };
     private final String pngPathPre = "png/slime";
     private final String pngPathSuf = ".png";
 
@@ -19,29 +17,22 @@ public class MoveChara {
 
     private MapData mapData;
 
-    private Image[][] charaImages;
-    private ImageView[] charaImageViews;
-    private ImageAnimation[] charaImageAnimations;
+    private Image[] charaImages;
+    private ImageView charaImageView;
+    private ImageAnimation charaImageAnimation;
 
     private int charaDirection;
 
     MoveChara(int startX, int startY, MapData mapData) {
         this.mapData = mapData;
 
-        charaImages = new Image[4][3];
-        charaImageViews = new ImageView[4];
-        charaImageAnimations = new ImageAnimation[4];
-
-        for (int i = 0; i < 4; i++) {
-            charaImages[i] = new Image[3];
-            for (int j = 0; j < 3; j++) {
-                charaImages[i][j] = new Image(
-                        pngPathPre + directions[i] + animationNumbers[j] + pngPathSuf);
-            }
-            charaImageViews[i] = new ImageView(charaImages[i][0]);
-            charaImageAnimations[i] = new ImageAnimation(
-                    charaImageViews[i], charaImages[i]);
+        // 21枚のスライム画像をロード
+        charaImages = new Image[21];
+        for (int i = 0; i < 21; i++) {
+            charaImages[i] = new Image(pngPathPre + (i + 1) + pngPathSuf);
         }
+        charaImageView = new ImageView(charaImages[0]);
+        charaImageAnimation = new ImageAnimation(charaImageView, charaImages);
 
         posX = startX;
         posY = startY;
@@ -52,13 +43,7 @@ public class MoveChara {
     // set the cat's direction
     public void setCharaDirection(int cd) {
         charaDirection = cd;
-        for (int i = 0; i < 4; i++) {
-            if (i == charaDirection) {
-                charaImageAnimations[i].start();
-            } else {
-                charaImageAnimations[i].stop();
-            }
-        }
+        charaImageAnimation.start();
     }
 
     // check whether the cat can move on
@@ -83,9 +68,11 @@ public class MoveChara {
         }
     }
 
+
+
     // getter: direction of the cat
     public ImageView getCharaImageView() {
-        return charaImageViews[charaDirection];
+        return charaImageView;
     }
 
     // getter: x-positon of the cat
@@ -105,12 +92,8 @@ public class MoveChara {
         private Image[] charaImages = null;
         private int index = 0;
 
-        private long duration = 500 * 1000000L; // 500[ms]
+        private long duration = 100 * 1000000L; // 100[ms] per frame
         private long startTime = 0;
-
-        private long count = 0L;
-        private long preCount;
-        private boolean isPlus = true;
 
         public ImageAnimation(ImageView charaView, Image[] images) {
             this.charaView = charaView;
@@ -124,19 +107,10 @@ public class MoveChara {
                 startTime = now;
             }
 
-            preCount = count;
-            count = (now - startTime) / duration;
-            if (preCount != count) {
-                if (isPlus) {
-                    index++;
-                } else {
-                    index--;
-                }
-                if (index < 0 || 2 < index) {
-                    index = 1;
-                    isPlus = !isPlus; // true == !false, false == !true
-                }
+            if ((now - startTime) > duration) {
+                index = (index + 1) % charaImages.length; // 21枚をループ
                 charaView.setImage(charaImages[index]);
+                startTime = now;
             }
         }
     }

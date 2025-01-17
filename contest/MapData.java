@@ -13,6 +13,7 @@ public class MapData {
     public static final int TYPE_ITEM_POISON_MASH = 4;
     private static final String mapItemFiles[] = {
             "png/dig.png",
+
         "png/healingMushroom.png",
         "png/poisonMushroom.png"
     };
