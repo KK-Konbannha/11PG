@@ -1,17 +1,13 @@
 import java.net.URL;
-import java.util.Map;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
+
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
-import javafx.scene.Group;
-import javafx.scene.layout.Pane;
+
 import javafx.fxml.FXML;
 
 public class MapGameController implements Initializable {
