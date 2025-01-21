@@ -1,10 +1,9 @@
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
 public class GameOverController {
 
 	@FXML
-	void onGameOverAction(ActionEvent event) {
+	void onGameOverAction() {
 		try {
 			StageDB.getGameOverStage().hide();
 			StageDB.getGameOverSound().stop();
