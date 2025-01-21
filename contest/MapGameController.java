@@ -1,14 +1,12 @@
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.GridPane;
+
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.fxml.Initializable;
-import javafx.event.ActionEvent;
-
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.KeyCode;
-
-import javafx.fxml.FXML;
 
 public class MapGameController implements Initializable {
     public MapData mapData;
@@ -119,6 +117,7 @@ public class MapGameController implements Initializable {
             System.out.println("func1");
             StageDB.getMainStage().hide();
             StageDB.getMainSound().stop();
+            StageDB.getGameOverSound().play();
             StageDB.getGameOverStage().show();
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
