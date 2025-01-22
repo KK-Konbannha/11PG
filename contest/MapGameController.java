@@ -1,6 +1,5 @@
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
@@ -12,18 +11,10 @@ public class MapGameController implements Initializable {
     public MapData mapData;
     public MoveChara chara;
     public GridPane mapGrid;
-    public ImageView[] mapImageViews;
 
     public void initMap() {
         mapData = new MapData(21, 15);
         chara = new MoveChara(1, 1, mapData);
-        mapImageViews = new ImageView[mapData.getHeight() * mapData.getWidth()];
-        for (int y = 0; y < mapData.getHeight(); y ++) {
-            for (int x = 0; x < mapData.getWidth(); x ++) {
-                int index = y * mapData.getWidth() + x;
-                mapImageViews[index] = mapData.getImageView(x, y);
-            }
-        }
         drawMap(chara);
     }
 
@@ -37,22 +28,38 @@ public class MapGameController implements Initializable {
         int cx = c.getPosX();
         int cy = c.getPosY();
         mapGrid.getChildren().clear();
-        for (int y = 0; y < mapData.getHeight(); y ++) {
-            for (int x = 0; x < mapData.getWidth(); x ++) {
-                int index = y * mapData.getWidth() + x;
+        for (int y = 0; y < mapData.getHeight(); y++) {
+            for (int x = 0; x < mapData.getWidth(); x++) {
                 if (x == cx && y == cy) {
-                    mapGrid.add(c.getCharaImageView(), x, y);
-
-                    if (mapData.getItems()[cy][cx] == MapData.TYPE_ITEM_DIG) {
-                        System.out.println("You found a dig item!");
+                    if (mapData.getMap(x, y) == MapData.TYPE_HOLE) {
+                        System.out.println("You've just fallen into a hole!");
                         initMap();
                         return;
+                    } else if (mapData.getMap(x, y) == MapData.TYPE_HEALING_MUSH) {
+                        System.out.println("You've got a healing mushroom!");
+                        mapData.setMap(x, y, MapData.TYPE_SPACE);
+                        mapData.setImageView(x, y, MapData.TYPE_SPACE);
+
+                        StageDB.healSound().setOnEndOfMedia(() -> {
+                            StageDB.healSound().seek(StageDB.healSound().getStartTime());
+                            StageDB.healSound().stop();
+                        });
+                        StageDB.healSound().play();
+                    } else if (mapData.getMap(x, y) == MapData.TYPE_POISON_MUSH) {
+                        System.out.println("You've got a poison mushroom!");
+                        mapData.setMap(x, y, MapData.TYPE_SPACE);
+                        mapData.setImageView(x, y, MapData.TYPE_SPACE);
+
+                        StageDB.damageSound().setOnEndOfMedia(() -> {
+                            StageDB.damageSound().seek(StageDB.healSound().getStartTime());
+                            StageDB.damageSound().stop();
+                        });
+                        StageDB.damageSound().play();
                     }
-                    
-                } else if(mapData.getItemImageView(x,y) != null) {
-                    mapGrid.add(mapData.getItemImageView(x, y),x,y);
-                } else  {
-                    mapGrid.add(mapImageViews[index], x, y);
+
+                    mapGrid.add(c.getCharaImageView(), x, y);
+                } else {
+                    mapGrid.add(mapData.getImageView(x, y), x, y);
                 }
             }
         }
@@ -73,44 +80,44 @@ public class MapGameController implements Initializable {
         }
     }
 
-    
-    // Operations for going the cat up
+
+    // Operations for going the slime up
     public void upButtonAction() {
         printAction("UP");
         chara.setCharaDirection(MoveChara.TYPE_UP);
         chara.move(0, -1);
         drawMap(chara);
-        
+
     }
 
-    // Operations for going the cat down
+    // Operations for going the slime down
     public void downButtonAction() {
         printAction("DOWN");
         chara.setCharaDirection(MoveChara.TYPE_DOWN);
         chara.move(0, 1);
         drawMap(chara);
-        
+
     }
 
-    // Operations for going the cat right
+    // Operations for going the slime right
     public void leftButtonAction() {
         printAction("LEFT");
         chara.setCharaDirection(MoveChara.TYPE_LEFT);
         chara.move(-1, 0);
         drawMap(chara);
-       
+
     }
 
-    // Operations for going the cat right
+    // Operations for going the slime right
     public void rightButtonAction() {
         printAction("RIGHT");
         chara.setCharaDirection(MoveChara.TYPE_RIGHT);
         chara.move(1, 0);
         drawMap(chara);
-       
+
     }
 
-    
+
     @FXML
     public void func1ButtonAction() {
         try {
@@ -139,7 +146,7 @@ public class MapGameController implements Initializable {
     @FXML
     public void func4ButtonAction() {
         System.out.println("func4: Nothing to do");
-        
+
     }
 
     // Print actions of user inputs

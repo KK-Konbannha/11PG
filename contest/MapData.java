@@ -1,68 +1,57 @@
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class MapData {
     public static final int TYPE_SPACE = 0;
     public static final int TYPE_WALL = 1;
+    public static final int TYPE_GOAL = 2;
+    public static final int TYPE_HOLE = 3;
+    public static final int TYPE_HEALING_MUSH = 4;
+    public static final int TYPE_POISON_MUSH = 5;
+
     private static final String[] mapImageFiles = {
-            "img/object/SPACE.png",
-            "img/object/WALL.png"
-    };
-    public static final int TYPE_ITEM_DIG = 2;
-    public static final int TYPE_ITEM_MASH = 3;
-    public static final int TYPE_ITEM_POISON_MASH = 4;
-    private static final String[] mapItemFiles = {
-            "img/object/dig.png",
-            "img/object/healingMushroom.png",
-            "img/object/poisonMushroom.png"
-    };
+            "img/object/SPACE.png", "img/object/WALL.png", "img/object/GOAL.png",
+            "img/object/HOLE.png", "img/object/HEALING_MUSH.png", "img/object/POISON_MUSH.png"};
+
 
     private final Image[] mapImages;
-    private final Image[] itemImages;
     private final ImageView[][] mapImageViews;
-    private final ImageView[][] itemImageViews;
     private final int[][] maps;
-    private final int[][] items;
     private final int width; // width of the map
     private final int height; // height of the map
 
+
     MapData(int x, int y) {
-        mapImages = new Image[2];
-        itemImages = new Image[mapItemFiles.length];
+        mapImages = new Image[mapImageFiles.length];
         mapImageViews = new ImageView[y][x];
-        itemImageViews = new ImageView[y][x];
-        for (int i = 0; i < 2; i ++) {
+        for (int i = 0; i < mapImageFiles.length; i++) {
             mapImages[i] = new Image(mapImageFiles[i]);
-        }
-        for (int i = 0;i<mapItemFiles.length;i++) {
-            itemImages[i] = new Image(mapItemFiles[i]);
         }
 
         width = x;
         height = y;
         maps = new int[y][x];
-        items = new int[y][x];
 
         fillMap();
-        fillItems();
         digMap(1, 3);
-        placeDIG();
-        placeItems();
+
+        placeGoal();
+        placeHealingMush();
+        placeHole();
+        placePoisonMush();
+
         setImageViews();
     }
 
     // fill two-dimentional arrays with a given number (maps[y][x])
     private void fillMap() {
-        for (int y = 0; y < height; y ++) {
-            for (int x = 0; x < width; x++) {
-                maps[y][x] = MapData.TYPE_WALL;
-            }
-        }
-    }
-    private void fillItems() {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                items[y][x] = MapData.TYPE_SPACE;
+                maps[y][x] = MapData.TYPE_WALL;
             }
         }
     }
@@ -70,10 +59,10 @@ public class MapData {
     // dig walls for making roads
     private void digMap(int x, int y) {
         setMap(x, y, MapData.TYPE_SPACE);
-        int[][] dl = { { 0, 1 }, { 0, -1 }, { -1, 0 }, { 1, 0 } };
+        int[][] dl = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}};
         int[] tmp;
 
-        for (int i = 0; i < dl.length; i ++) {
+        for (int i = 0; i < dl.length; i++) {
             int r = (int) (Math.random() * dl.length);
             tmp = dl[i];
             dl[i] = dl[r];
@@ -90,40 +79,74 @@ public class MapData {
         }
     }
 
-    private void placeDIG() {
-        int placedItems = 0;
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    // 条件を満たす場所に穴を配置
-                    boolean isTop = isWall(x, y - 1) && /*上が壁*/ isWall(x - 1, y) && /*左が壁*/isWall(x + 1, y)/*右が壁*/ ;
-                    boolean isRight = isWall(x, y -1) && /*上が壁*/isWall(x+1, y) && /*右が壁*/isWall(x, y +1) /*下が壁*/ ;
-                    boolean isLeft = isWall(x, y -1) && /*上が壁*/isWall(x-1, y) && /*左が壁*/isWall(x, y +1) /*下が壁*/ ;
-                    boolean isBottom = isWall(x+1, y ) && /*右が壁*/isWall(x-1, y) && /*左が壁*/isWall(x, y +1)/*下が壁*/ ;
-                    if (maps[y][x] == TYPE_SPACE &&(isTop || isRight ||isLeft ||isBottom)
-                        ) { 
-                        items[y][x] = TYPE_ITEM_DIG; // dig.png を配置
-                        placedItems++;
-                        if (placedItems >= countAvailableSpots()) {
-                            break;
-                        }
-                    }
-                }
-        }
-        items[1][1] = TYPE_SPACE;
+    private void placeGoal() {
+        int[] deepestSpace = findDeepestSpace();
+        setMap(deepestSpace[0], deepestSpace[1], MapData.TYPE_GOAL);
     }
 
-    private void placeItems() {
-        for (int i = 0; i < 5; i++) { // 5個のアイテムを配置
-            int x, y;
-            do {
-                x = (int) (Math.random() * width);
-                y = (int) (Math.random() * height);
-            } while (maps[y][x] != TYPE_SPACE || items[y][x] != TYPE_SPACE); // 空白マスを選択
-            items[y][x] = (Math.random() < 0.5) ? TYPE_ITEM_MASH : TYPE_ITEM_POISON_MASH;
+    // 回復きのこを配置
+    // digMap(mapの道の配置)の後に実行すること
+    private void placeHealingMush() {
+        // 回復きのこの数
+        int HEALING_MUSH_NUM = 3;
+
+        // 行き止まりの場所のリストを取得
+        List<int[]> deadEndPlaces = findDeadEndPlace();
+
+        // 行き止まりの場所のリストの中から何番目の場所に配置するかを決める
+        List<Integer> placeNums = getRandomNum(deadEndPlaces.size(), HEALING_MUSH_NUM);
+
+        for (Integer placeNum : placeNums) {
+            int[] place = deadEndPlaces.get(placeNum);
+
+            setMap(place[0], place[1], TYPE_HEALING_MUSH);
         }
-        items[1][1] = TYPE_SPACE;
     }
-    
+
+    // 落とし穴を配置
+    // placeHealingMushの後に実行すること
+    private void placeHole() {
+        // 落とし穴の数
+        int HOLE_NUM = 3;
+
+        // 行き止まりの場所のリストを取得
+        List<int[]> deadEndPlaces = findDeadEndPlace();
+
+        // 行き止まりの場所のリストの中から何番目の場所に配置するかを決める
+        List<Integer> placeNums = getRandomNum(deadEndPlaces.size(), HOLE_NUM);
+
+        for (Integer placeNum : placeNums) {
+            int[] place = deadEndPlaces.get(placeNum);
+
+            setMap(place[0], place[1], TYPE_HOLE);
+        }
+    }
+
+    // 毒きのこを配置
+    // placeHoleの後に実行すること
+    private void placePoisonMush() {
+        // 毒きのこの数
+        int POISON_MUSH_NUM = 3;
+
+        List<int[]> spaces = new ArrayList<>();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (isSpace(x, y) && !(x == 1 && y == 1))
+                    spaces.add(new int[]{x, y});
+            }
+        }
+
+        // 道のリストの中から何番目の場所に配置するかを決める
+        List<Integer> placeNums = getRandomNum(spaces.size(), POISON_MUSH_NUM);
+
+        for (Integer placeNum : placeNums) {
+            int[] space = spaces.get(placeNum);
+
+            setMap(space[0], space[1], TYPE_POISON_MUSH);
+        }
+    }
+
 
     public int getMap(int x, int y) {
         if (x < 0 || width <= x || y < 0 || height <= y) {
@@ -144,34 +167,18 @@ public class MapData {
     }
 
 
-    public ImageView getItemImageView(int x, int y) {
-        return itemImageViews[y][x];
-    }
-
-
     public void setImageViews() {
-        for (int y = 0; y < height; y ++) {
+        for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 mapImageViews[y][x] = new ImageView(mapImages[maps[y][x]]);
-                if (items[y][x] == TYPE_ITEM_DIG) {
-                    itemImageViews[y][x] = new ImageView(itemImages[0]);
-                } else if(items[y][x] == TYPE_ITEM_MASH) {
-                    itemImageViews[y][x] = new ImageView(itemImages[1]);
-                } else if(items[y][x] == TYPE_ITEM_POISON_MASH) {
-                    itemImageViews[y][x] = new ImageView(itemImages[2]);
-                } else {
-                    itemImageViews[y][x] = null;
-                }
             }
         }
     }
 
-    
-    
-
-    public int[][] getItems() {
-        return items;
+    public void setImageView(int x, int y, int type) {
+        mapImageViews[y][x] = new ImageView(mapImages[type]);
     }
+
 
     public int getHeight() {
         return height;
@@ -181,37 +188,102 @@ public class MapData {
         return width;
     }
 
-    private int countAvailableSpots() {
-        int count = 0;
+    boolean isWall(int x, int y) {
+        return getMap(x, y) == TYPE_WALL;
+    }
+
+    boolean isSpace(int x, int y) {
+        return getMap(x, y) == TYPE_SPACE;
+    }
+
+    boolean isDeadEnd(int x, int y) {
+        int openDirections = 0;
+
+        final boolean canMoveUp = !isWall(x, y - 1);
+        final boolean canMoveDown = !isWall(x, y + 1);
+        final boolean canMoveLeft = !isWall(x - 1, y);
+        final boolean canMoveRight = !isWall(x + 1, y);
+
+        if (canMoveUp) openDirections++;
+        if (canMoveDown) openDirections++;
+        if (canMoveLeft) openDirections++;
+        if (canMoveRight) openDirections++;
+
+        return (openDirections == 1) && isSpace(x, y);
+    }
+
+    // 1からある数字(endNum)までの中から特定個数(retNum)の数字をランダムに取得する
+    private List<Integer> getRandomNum(int endNum, int retNum) {
+        ArrayList<Integer> nums = new ArrayList<>();
+        for (int i = 0; i < endNum; i++) {
+            nums.add(i);
+        }
+
+        Collections.shuffle(nums);
+
+        if (nums.size() < retNum) {
+            return nums;
+        } else {
+            return nums.subList(0, retNum);
+        }
+    }
+
+    // 行き止まりの場所を列挙
+    private List<int[]> findDeadEndPlace() {
+        ArrayList<int[]> deadEndPlace = new ArrayList<>();
+
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                if (maps[y][x] == TYPE_SPACE &&
-                    isWall(x, y - 1) && // 上が壁
-                    isWall(x - 1, y) && // 左が壁
-                    isWall(x + 1, y)) { // 右が壁
-                    count++;
-                } else if (maps[y][x] == TYPE_SPACE &&
-                    isWall(x, y -1) && // 上が壁
-                    isWall(x+1, y) && //右が壁
-                    isWall(x, y +1)){ //下が壁
-                    count++;
-                } else if (maps[y][x] == TYPE_SPACE &&
-                    isWall(x -1, y ) && // 左が壁
-                    isWall(x, y+1) && //下が壁
-                    isWall(x +1, y )){ //右が壁
-                    count++;
-                } else if (maps[y][x] == TYPE_SPACE &&
-                    isWall(x, y -1) && // 上が壁
-                    isWall(x-1, y) && //左が壁
-                    isWall(x, y +1)){ //下が壁
-                    count++;
+                if (isDeadEnd(x, y) && !(x == 1 && y == 1)) {
+                    deadEndPlace.add(new int[]{x, y});
                 }
             }
         }
-        return count;
+
+        return deadEndPlace;
     }
 
-    private boolean isWall(int x, int y) {
-        return getMap(x, y) == TYPE_WALL;
+    // ある地点（スタート地点）から一番遠い地点をdeepestFirstSearch（深さ優先探索）で探す
+    private int[] findDeepestSpace() {
+        // 開始位置
+        final int startX = 1;
+        final int startY = 1;
+
+        final int[] deepestSpace = {startX, startY};
+        final int[][] visited = new int[height][width];
+
+        dfs(startX, startY, 0, visited, deepestSpace, -1);
+
+        return deepestSpace;
+    }
+
+    // 深さ優先探索のメインの処理
+    private int dfs(int x, int y, int depth, int[][] visited, int[] deepestSpace, int maxDepth) {
+        // 基本条件：訪問済みの場合は探索終了
+        if (visited[y][x] == 1) {
+            return maxDepth;
+        }
+
+        // 訪問状態を更新
+        visited[y][x] = 1;
+
+        // 最深部の更新
+        if (depth > maxDepth) {
+            maxDepth = depth;
+            deepestSpace[0] = x;
+            deepestSpace[1] = y;
+        }
+
+        // 4方向それぞれに再帰的に探索
+        int[][] directions = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        for (int[] direction : directions) {
+            int newX = x + direction[0];
+            int newY = y + direction[1];
+            if (isSpace(newX, newY)) {
+                maxDepth = dfs(newX, newY, depth + 1, visited, deepestSpace, maxDepth);
+            }
+        }
+
+        return maxDepth;
     }
 }

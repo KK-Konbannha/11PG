@@ -3,18 +3,18 @@ import javafx.stage.Stage;
 
 
 public class MapGame extends Application {
-  Stage stage;
+    Stage stage;
 
-  @Override
-  public void start(Stage primaryStage) throws Exception {
-    stage = primaryStage;
-    stage.hide();
-    StageDB.setMainClass(getClass());
-    StageDB.getMainStage().show();
-    StageDB.getMainSound().play();
-  }
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        stage = primaryStage;
+        stage.hide();
+        StageDB.setMainClass(getClass());
+        StageDB.getMainStage().show();
+        StageDB.getMainSound().play();
+    }
 
-  public static void main(String[] args) {
-    launch(args);
-  }
+    public static void main(String[] args) {
+        launch(args);
+    }
 }
