@@ -1,5 +1,6 @@
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -12,6 +13,7 @@ class StageDB {
 
     static private Stage mainStage = null;
     static private Stage gameOverStage = null;
+    static private Stage gameClearStage = null;
     static private MediaPlayer mainSound = null;
     static private MediaPlayer gameOverSound = null;
     static private MediaPlayer healSound = null;
@@ -117,5 +119,21 @@ class StageDB {
             }
         }
         return gameOverStage;
+    }
+
+    public static Stage getGameClearStage() {
+        if (gameClearStage == null) {
+            try {
+                System.out.println("StageDB:getGameClearStage()");
+                FXMLLoader loader = new FXMLLoader(mainClass.getResource("MapGameClear.fxml"));
+                AnchorPane root = loader.load();
+                Scene scene = new Scene(root);
+                gameClearStage = new Stage();
+                gameClearStage.setScene(scene);
+            } catch (IOException ioe) {
+                System.err.println(ioe);
+            }
+        }
+        return gameClearStage;
     }
 }

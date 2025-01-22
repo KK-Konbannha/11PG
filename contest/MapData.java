@@ -134,7 +134,7 @@ public class MapData {
     // placeHoleの後に実行すること
     private void placePoisonMush() {
         // 毒きのこの数
-        int POISON_MUSH_NUM = 3;
+        int POISON_MUSH_NUM = 15;
 
         List<int[]> spaces = new ArrayList<>();
 

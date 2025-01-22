@@ -1,22 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 <VBox onKeyPressed="#keyAction" prefHeight="421.0" prefWidth="592.0" xmlns="http://javafx.com/javafx/23.0.1"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="MapGameController">
     <padding>
         <Insets bottom="10" left="10" right="10" top="10"/>
     </padding>
 
-    <HBox prefHeight="50">
+    <HBox prefHeight="41.0" prefWidth="523.0">
         <Button onAction="#func1ButtonAction" prefWidth="100" text="func1"/>
         <Button onAction="#func2ButtonAction" prefWidth="100" text="func2"/>
         <Button onAction="#func3ButtonAction" prefWidth="100" text="func3"/>
         <Button onAction="#func4ButtonAction" prefWidth="100" text="func4"/>
+        <VBox.margin>
+            <Insets right="100.0"/>
+        </VBox.margin>
+    </HBox>
+    <HBox prefHeight="41.0" prefWidth="156.0">
+        <VBox.margin>
+            <Insets bottom="10.0" top="10.0"/>
+        </VBox.margin>
+        <children>
+            <Circle fx:id="circle_1" fill="RED" radius="14.0" stroke="TRANSPARENT" strokeType="INSIDE">
+                <HBox.margin>
+                    <Insets right="10.0"/>
+                </HBox.margin>
+            </Circle>
+            <Circle fx:id="circle_2" fill="RED" radius="14.0" stroke="TRANSPARENT" strokeType="INSIDE">
+                <HBox.margin>
+                    <Insets right="10.0"/>
+                </HBox.margin>
+            </Circle>
+            <Circle fx:id="circle_3" fill="RED" radius="14.0" stroke="TRANSPARENT" strokeType="INSIDE">
+                <HBox.margin>
+                    <Insets right="10.0"/>
+                </HBox.margin>
+            </Circle>
+            <Circle fx:id="circle_4" fill="RED" radius="14.0" stroke="TRANSPARENT" strokeType="INSIDE">
+                <HBox.margin>
+                    <Insets right="10.0"/>
+                </HBox.margin>
+            </Circle>
+            <Circle fx:id="circle_5" fill="RED" radius="14.0" stroke="TRANSPARENT" strokeType="INSIDE">
+                <HBox.margin>
+                    <Insets/>
+                </HBox.margin>
+            </Circle>
+        </children>
     </HBox>
     <GridPane fx:id="mapGrid" prefHeight="360" prefWidth="360">
+        <columnConstraints>
+            <ColumnConstraints/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints/>
+        </rowConstraints>
+        <children>
+            <HBox prefHeight="100.0" prefWidth="200.0"/>
+        </children>
     </GridPane>
 </VBox>

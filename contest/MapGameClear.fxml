@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameClearController">
+    <children>
+        <Label layoutX="65.0" layoutY="120.0" prefHeight="160.0" prefWidth="470.0" text="Game Clear !!"
+               textAlignment="CENTER">
+            <font>
+                <Font name="System Bold Italic" size="53.0"/>
+            </font>
+        </Label>
+        <Button layoutX="435.0" layoutY="317.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="137.0"
+                text="ゲームを終了する" textAlignment="CENTER" onAction="#onGameClearAction">
+            <font>
+                <Font name="System Bold" size="17.0"/>
+            </font>
+        </Button>
+    </children>
+</AnchorPane>
