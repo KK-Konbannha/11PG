@@ -5,8 +5,9 @@ public class GameOverController {
     @FXML
     void onGameOverAction() {
         try {
-            StageDB.getGameOverStage().hide();
+            StageDB.getGameOverStage().close();
             StageDB.getGameOverSound().stop();
+
             StageDB.getMainStage().show();
             StageDB.getMainSound().play();
         } catch (Exception ex) {

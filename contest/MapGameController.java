@@ -4,6 +4,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -13,6 +15,17 @@ public class MapGameController implements Initializable {
     public MoveChara chara;
     public GridPane mapGrid;
 
+    @FXML
+    public Circle circle_1;
+    @FXML
+    public Circle circle_2;
+    @FXML
+    public Circle circle_3;
+    @FXML
+    public Circle circle_4;
+    @FXML
+    public Circle circle_5;
+
     public void initMap() {
         mapData = new MapData(21, 15);
         chara = new MoveChara(1, 1, mapData);
@@ -21,6 +34,11 @@ public class MapGameController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        circle_1.setFill(Color.RED);
+        circle_2.setFill(Color.RED);
+        circle_3.setFill(Color.RED);
+        circle_4.setFill(Color.RED);
+        circle_5.setFill(Color.RED);
         initMap();
     }
 
@@ -51,6 +69,20 @@ public class MapGameController implements Initializable {
                             StageDB.healSound().stop();
                         });
                         StageDB.healSound().play();
+
+                        if (chara.HP == 4) {
+                            chara.HP++;
+                            circle_5.setFill(Color.RED);
+                        } else if (chara.HP == 3) {
+                            chara.HP++;
+                            circle_4.setFill(Color.RED);
+                        } else if (chara.HP == 2) {
+                            chara.HP++;
+                            circle_3.setFill(Color.RED);
+                        } else if (chara.HP == 1) {
+                            chara.HP++;
+                            circle_2.setFill(Color.RED);
+                        }
                     } else if (mapData.getMap(x, y) == MapData.TYPE_POISON_MUSH) {
                         System.out.println("You've got a poison mushroom!");
                         mapData.setMap(x, y, MapData.TYPE_SPACE);
@@ -61,8 +93,30 @@ public class MapGameController implements Initializable {
                             StageDB.damageSound().stop();
                         });
                         StageDB.damageSound().play();
+
+                        if (chara.HP == 5) {
+                            chara.HP--;
+                            circle_5.setFill(Color.TRANSPARENT);
+                        } else if (chara.HP == 4) {
+                            chara.HP--;
+                            circle_4.setFill(Color.TRANSPARENT);
+                        } else if (chara.HP == 3) {
+                            chara.HP--;
+                            circle_3.setFill(Color.TRANSPARENT);
+                        } else if (chara.HP == 2) {
+                            chara.HP--;
+                            circle_2.setFill(Color.TRANSPARENT);
+                        } else if (chara.HP == 1) {
+                            chara.HP--;
+                            circle_1.setFill(Color.TRANSPARENT);
+                        }
                     } else if (mapData.getMap(x, y) == MapData.TYPE_GOAL) {
                         System.out.println("Congratulations! Game completed!");
+
+                        StageDB.getMainStage().close();
+                        StageDB.getMainSound().stop();
+
+                        StageDB.getGameClearStage().show();
                     } else if (mapData.getMap(x, y) == MapData.TYPE_ARROW_UP) {
                         flagUp++;
                     } else if (mapData.getMap(x, y) == MapData.TYPE_ARROW_DOWN) {
@@ -98,6 +152,25 @@ public class MapGameController implements Initializable {
             new Thread(task).start();
         } else if (flagRight == 1) {
             task.setOnSucceeded(event -> rightButtonAction());
+            new Thread(task).start();
+        }
+
+        if (circle_1.getFill() == Color.TRANSPARENT) {
+            task.setOnSucceeded(event -> {
+                StageDB.getMainStage().close();
+                StageDB.getMainSound().stop();
+
+                circle_1.setFill(Color.RED);
+                circle_2.setFill(Color.RED);
+                circle_3.setFill(Color.RED);
+                circle_4.setFill(Color.RED);
+                circle_5.setFill(Color.RED);
+
+                chara.HP = 5;
+
+                StageDB.getGameOverSound().play();
+                StageDB.getGameOverStage().show();
+            });
             new Thread(task).start();
         }
     }

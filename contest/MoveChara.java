@@ -8,6 +8,8 @@ public class MoveChara {
     public static final int TYPE_RIGHT = 2;
     public static final int TYPE_UP = 3;
 
+    public static int HP = 5;
+
     private int posX;
     private int posY;
 
