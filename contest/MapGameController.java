@@ -55,6 +55,8 @@ public class MapGameController implements Initializable {
                             StageDB.damageSound().stop();
                         });
                         StageDB.damageSound().play();
+                    } else if (mapData.getMap(x, y) == MapData.TYPE_GOAL) {
+                        System.out.println("Congratulations! Game completed!");
                     }
 
                     mapGrid.add(c.getCharaImageView(), x, y);
