@@ -1,12 +1,12 @@
-import java.io.IOException;
-import java.io.File;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.stage.Stage;
+
+import java.io.File;
+import java.io.IOException;
 
 class StageDB {
 
@@ -21,6 +21,7 @@ class StageDB {
     static private final String gameOverSoundFileName = "sound/miss1.mp3";
     static private final String healSoundFileName = "sound/maou_se_sound_drink01.mp3";
     static private final String damageSoundFileName = "sound/maou_damage.mp3";
+
     public static void setMainClass(Class mainClass) {
         StageDB.mainClass = mainClass;
     }
@@ -32,7 +33,7 @@ class StageDB {
                 MediaPlayer mp = new MediaPlayer(m);
                 mp.setCycleCount(MediaPlayer.INDEFINITE); // loop play
                 mp.setRate(1.0); // 1.0 = normal speed
-                mp.setVolume(0.7); // volume from 0.0 to 1.0
+                mp.setVolume(0.3); // volume from 0.0 to 1.0
                 mainSound = mp;
             } catch (Exception io) {
                 System.err.print(io.getMessage());
@@ -63,7 +64,7 @@ class StageDB {
                 Media m = new Media(new File(healSoundFileName).toURI().toString());
                 MediaPlayer mp = new MediaPlayer(m);
                 mp.setRate(1.0); // 1.0 = normal speed
-                mp.setVolume(0.7); // volume from 0.0 to 1.0
+                mp.setVolume(0.9); // volume from 0.0 to 1.0
                 healSound = mp;
             } catch (Exception io) {
                 System.err.print(io.getMessage());
@@ -78,7 +79,7 @@ class StageDB {
                 Media m = new Media(new File(damageSoundFileName).toURI().toString());
                 MediaPlayer mp = new MediaPlayer(m);
                 mp.setRate(1.0); // 1.0 = normal speed
-                mp.setVolume(0.7); // volume from 0.0 to 1.0
+                mp.setVolume(0.5); // volume from 0.0 to 1.0
                 damageSound = mp;
             } catch (Exception io) {
                 System.err.print(io.getMessage());

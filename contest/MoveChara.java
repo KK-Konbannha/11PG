@@ -1,6 +1,6 @@
+import javafx.animation.AnimationTimer;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.animation.AnimationTimer;
 
 public class MoveChara {
     public static final int TYPE_DOWN = 0;
@@ -46,7 +46,7 @@ public class MoveChara {
         setCharaDirection(TYPE_RIGHT); // start with right-direction
     }
 
-    // set the cat's direction
+    // set the slime's direction
     public void setCharaDirection(int cd) {
         charaDirection = cd;
         for (int i = 0; i < 4; i++) {
@@ -58,14 +58,12 @@ public class MoveChara {
         }
     }
 
-    // check whether the cat can move on
+    // check whether the slime can move on
     private boolean isMovable(int dx, int dy) {
-        if (mapData.getMap(posX + dx, posY + dy) == MapData.TYPE_WALL) {
-            return false;
-        } else return mapData.getMap(posX + dx, posY + dy) == MapData.TYPE_SPACE;
+        return !mapData.isWall(posX + dx, posY + dy);
     }
 
-    // move the cat
+    // move the slime
     public void move(int dx, int dy) {
         if (isMovable(dx, dy)) {
             posX += dx;
@@ -74,22 +72,22 @@ public class MoveChara {
         }
     }
 
-    // getter: direction of the cat
+    // getter: direction of the slime
     public ImageView getCharaImageView() {
         return charaImageViews[charaDirection];
     }
 
-    // getter: x-positon of the cat
+    // getter: x-position of the slime
     public int getPosX() {
         return posX;
     }
 
-    // getter: y-positon of the cat
+    // getter: y-position of the slime
     public int getPosY() {
         return posY;
     }
 
-    // Show the cat animation
+    // Show the slime animation
     private static class ImageAnimation extends AnimationTimer {
 
         private final ImageView charaView;

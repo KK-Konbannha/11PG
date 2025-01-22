@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
-<VBox fx:controller="MapGameController" xmlns:fx="http://javafx.com/fxml" xmlns="http://javafx.com/javafx/11"
-      onKeyPressed="#keyAction">
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<VBox onKeyPressed="#keyAction" prefHeight="421.0" prefWidth="592.0" xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="MapGameController">
     <padding>
-        <Insets top="10" right="10" bottom="10" left="10"/>
+        <Insets bottom="10" left="10" right="10" top="10"/>
     </padding>
 
     <HBox prefHeight="50">
-        <Button text="func1" prefWidth="100" onAction="#func1ButtonAction"/>
-        <Button text="func2" prefWidth="100" onAction="#func2ButtonAction"/>
-        <Button text="func3" prefWidth="100" onAction="#func3ButtonAction"/>
-        <Button text="func4" prefWidth="100" onAction="#func4ButtonAction"/>
+        <Button onAction="#func1ButtonAction" prefWidth="100" text="func1"/>
+        <Button onAction="#func2ButtonAction" prefWidth="100" text="func2"/>
+        <Button onAction="#func3ButtonAction" prefWidth="100" text="func3"/>
+        <Button onAction="#func4ButtonAction" prefWidth="100" text="func4"/>
     </HBox>
-    <GridPane fx:id="mapGrid" prefWidth="360" prefHeight="360">
+    <GridPane fx:id="mapGrid" prefHeight="360" prefWidth="360">
     </GridPane>
 </VBox>
