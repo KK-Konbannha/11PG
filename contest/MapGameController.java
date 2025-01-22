@@ -1,3 +1,4 @@
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.input.KeyCode;
@@ -25,6 +26,11 @@ public class MapGameController implements Initializable {
 
     // Draw the map
     public void drawMap(MoveChara c) {
+        int flagUp = 0;
+        int flagDown = 0;
+        int flagLeft = 0;
+        int flagRight = 0;
+
         int cx = c.getPosX();
         int cy = c.getPosY();
         mapGrid.getChildren().clear();
@@ -57,6 +63,14 @@ public class MapGameController implements Initializable {
                         StageDB.damageSound().play();
                     } else if (mapData.getMap(x, y) == MapData.TYPE_GOAL) {
                         System.out.println("Congratulations! Game completed!");
+                    } else if (mapData.getMap(x, y) == MapData.TYPE_ARROW_UP) {
+                        flagUp++;
+                    } else if (mapData.getMap(x, y) == MapData.TYPE_ARROW_DOWN) {
+                        flagDown++;
+                    } else if (mapData.getMap(x, y) == MapData.TYPE_ARROW_LEFT) {
+                        flagLeft++;
+                    } else if (mapData.getMap(x, y) == MapData.TYPE_ARROW_RIGHT) {
+                        flagRight++;
                     }
 
                     mapGrid.add(c.getCharaImageView(), x, y);
@@ -64,6 +78,27 @@ public class MapGameController implements Initializable {
                     mapGrid.add(mapData.getImageView(x, y), x, y);
                 }
             }
+        }
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                Thread.sleep(100);
+                return null;
+            }
+        };
+
+        if (flagUp == 1) {
+            task.setOnSucceeded(event -> upButtonAction());
+            new Thread(task).start();
+        } else if (flagDown == 1) {
+            task.setOnSucceeded(event -> downButtonAction());
+            new Thread(task).start();
+        } else if (flagLeft == 1) {
+            task.setOnSucceeded(event -> leftButtonAction());
+            new Thread(task).start();
+        } else if (flagRight == 1) {
+            task.setOnSucceeded(event -> rightButtonAction());
+            new Thread(task).start();
         }
     }
 

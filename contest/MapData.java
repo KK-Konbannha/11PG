@@ -12,10 +12,17 @@ public class MapData {
     public static final int TYPE_HOLE = 3;
     public static final int TYPE_HEALING_MUSH = 4;
     public static final int TYPE_POISON_MUSH = 5;
+    public static final int TYPE_ARROW_UP = 6;
+    public static final int TYPE_ARROW_DOWN = 7;
+    public static final int TYPE_ARROW_LEFT = 8;
+    public static final int TYPE_ARROW_RIGHT = 9;
 
     private static final String[] mapImageFiles = {
             "img/object/SPACE.png", "img/object/WALL.png", "img/object/GOAL.png",
-            "img/object/HOLE.png", "img/object/HEALING_MUSH.png", "img/object/POISON_MUSH.png"};
+            "img/object/HOLE.png", "img/object/HEALING_MUSH.png", "img/object/POISON_MUSH.png",
+            "img/object/ARROW_UP.png", "img/object/ARROW_DOWN.png", "img/object/ARROW_LEFT.png",
+            "img/object/ARROW_RIGHT.png",
+    };
 
 
     private final Image[] mapImages;
@@ -43,6 +50,7 @@ public class MapData {
         placeHealingMush();
         placeHole();
         placePoisonMush();
+        placeMovingFloor();
 
         setImageViews();
     }
@@ -145,6 +153,43 @@ public class MapData {
 
             setMap(space[0], space[1], TYPE_POISON_MUSH);
         }
+    }
+
+    private void placeMovingFloor() {
+        List<int[]> walls = new ArrayList<>();
+
+        for (int y = 0; y <= height - 2; y++) {
+            for (int x = 0; x <= width - 2; x++) {
+                if (isWall(x, y) && !(x == 1 && y == 1) && x != 0 && y != 0) {
+                    walls.add(new int[]{x, y});
+                }
+            }
+        }
+
+        List<int[]> replacementWalls = new ArrayList<>();
+
+        for (int[] wall : walls) {
+            final boolean canMoveUp = !isWall(wall[0], wall[1] + 1);
+            final boolean canMoveDown = !isWall(wall[0], wall[1] - 1);
+            final boolean canMoveLeft = !isWall(wall[0] - 1, wall[1]);
+            final boolean canMoveRight = !isWall(wall[0] + 1, wall[1]);
+
+            if ((canMoveUp && canMoveDown)) {
+                replacementWalls.add(new int[]{wall[0], wall[1], 0});
+            } else if (canMoveLeft && canMoveRight) {
+                replacementWalls.add(new int[]{wall[0], wall[1], 1});
+            }
+        }
+
+        for (int[] wall : replacementWalls) {
+            int rand = (int) (Math.random() * 2);
+            if (wall[2] == 0) {
+                setMap(wall[0], wall[1], rand == 1 ? MapData.TYPE_ARROW_UP : MapData.TYPE_ARROW_DOWN);
+            } else {
+                setMap(wall[0], wall[1], rand == 1 ? MapData.TYPE_ARROW_LEFT : MapData.TYPE_ARROW_RIGHT);
+            }
+        }
+
     }
 
 
